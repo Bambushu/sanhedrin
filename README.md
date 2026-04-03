@@ -1,36 +1,38 @@
 # Sanhedrin
 
-Structured disagreement for hard decisions.
+A Claude Code skill that turns one-shot AI advice into structured adversarial strategy.
 
 > *"Accept the truth from whatever source it comes"* -- Maimonides
 
-<div align="center">
+<p align="center">
+  <a href="https://bambushu.github.io/sanhedrin/demo/replay.html">
+    <img src="demo/hero-poster.png" alt="Sanhedrin terminal replay - advisors debating an unlicensed casino offer" width="920">
+  </a>
+</p>
 
-https://github.com/Bambushu/sanhedrin/raw/main/demo/sanhedrin-demo.mp4
+<p align="center">
+  <a href="https://bambushu.github.io/sanhedrin/demo/replay.html">Open interactive replay</a>
+</p>
 
-</div>
-
-## The problem
-
-You ask an AI for advice and it gives you one perspective. A confident one. It sounds right. You act on it.
-
-That is the failure mode.
-
-Hard decisions -- career moves, negotiations, competitive strategy, whether to walk away -- have multiple valid framings. The same situation looks completely different through the lens of power dynamics, game theory, cognitive bias, or long-term reputation. One model, one perspective, one answer is not enough.
-
-Sanhedrin dispatches seven independent strategic thinkers against your situation. They write blind memos before seeing each other's work. Then they cross-examine each other's strategies. The output is not consensus. It is structured disagreement that shows you what the decision actually is.
-
-From the demo:
-
-> *"The unlicensed casino thinks it is offering you money. It is actually showing you a map. Read the map."*
-
-That is the kind of counsel Sanhedrin produces. Not a generic recommendation, but a reframing that changes what you are deciding.
+- **Blind memos** -- advisors write independently before seeing each other's work
+- **Cross-examination** -- every strategy gets steelmanned and attacked on structure
+- **Mandatory "do nothing"** -- inaction is always evaluated as an explicit option
 
 ## Install
 
 ```bash
 git clone https://github.com/Bambushu/sanhedrin ~/.claude/skills/sanhedrin
 ```
+
+Verify it loaded:
+
+```
+/sanhedrin
+```
+
+You should see "Sanhedrin convened" in your terminal.
+
+**Optional:** Codex integration adds the audit step (probability bands, pre-mortems, decision trees). Sanhedrin works without it.
 
 ## Quick start
 
@@ -39,6 +41,34 @@ git clone https://github.com/Bambushu/sanhedrin ~/.claude/skills/sanhedrin
 I have two acquisition offers, 45 days of runway, and a cofounder who wants to wait.
 What should we do?
 ```
+
+```
+/sanhedrin
+My employer offered 15% raise to stay. A competitor is offering 40% more
+but the role is lateral. I have 5 days to decide.
+```
+
+```
+/sanhedrin wargame
+Our main competitor just undercut us on pricing by 30%. We have 6 months
+more runway than they do. CEO wants to match their price immediately.
+```
+
+## What makes this different
+
+**Blind memos.** Five advisors write independent analyses in parallel. No advisor sees another's work until all memos are in. This prevents anchoring and groupthink. When five frameworks converge on the same answer without coordination, that signal is worth something.
+
+**Cross-examination.** Every strategy gets steelmanned by a rival and attacked on structure: faulty incentive assumptions, ignored second-order effects, poor timing, reputational blowback. Generic objections are not allowed. No "it depends."
+
+**Mandatory "do nothing" row.** The audit always evaluates inaction as an explicit option. This prevents action bias -- the default tendency to do *something* even when waiting is correct.
+
+**Preserved dissent.** If Maimonides says a strategy is effective but corrosive, or Akiva sees a hidden opportunity the majority dismissed, their position is preserved in the final counsel. Minority views are often the most valuable signal.
+
+From the demo:
+
+> *"The unlicensed casino thinks it is offering you money. It is actually showing you a map. Read the map."*
+
+That is the kind of counsel Sanhedrin produces. Not a generic recommendation, but a reframing that changes what you are deciding.
 
 ## How it works
 
@@ -68,7 +98,7 @@ Final counsel   Recommended move, fallback, tripwires, first action
 
 ## The council
 
-Three permanent members. Four available as dynamic picks based on what you are facing.
+Seven personas total. Five are active per session: three permanent members and two dynamic picks based on what you are facing.
 
 ### Always present
 
@@ -86,7 +116,7 @@ The ethical anchor. If the recommended move is effective but destructive to repu
 
 ### Dynamic roster
 
-Chosen automatically by situation type, or override with `Roster: akiva, talleyrand`.
+Two are chosen automatically by situation type, or override with `Roster: akiva, talleyrand`.
 
 **Thomas Schelling** -- Bargaining, signaling, BATNA
 *"What signals are you sending? What commitment would change the game?"*
@@ -115,24 +145,16 @@ For decisions with an active opponent. Sanhedrin builds an opponent model (their
 
 Three or more advisors flagging the same gap in the opponent model will halt the simulation and ask you to fill it. No wargame runs on a weak model.
 
-## What makes this different
-
-**Blind memos.** Advisors write independently before seeing each other. This prevents anchoring and groupthink. When five frameworks converge on the same answer without coordination, that signal is worth something.
-
-**Cross-examination.** Every strategy gets steelmanned by a rival and attacked on structure: faulty incentive assumptions, ignored second-order effects, poor timing, reputational blowback. Generic objections are not allowed.
-
-**Mandatory "do nothing" row.** The audit always evaluates inaction as an explicit option. This prevents action bias -- the default tendency to do *something* even when waiting is correct.
-
-**Preserved dissent.** If Maimonides says a strategy is effective but corrosive, or Akiva sees a hidden opportunity the majority dismissed, their position is preserved in the final counsel. Minority views are often the most valuable signal.
-
-## Demo
-
-Open [demo/replay.html](demo/replay.html) in a browser for the interactive terminal replay, or watch `demo/sanhedrin-demo.mp4`.
-
 ## Requirements
 
 - [Claude Code](https://docs.anthropic.com/en/docs/claude-code)
-- Codex integration (optional, for the audit step)
+- Codex integration (optional -- adds the audit step with probability bands and decision trees)
+
+## Contributing
+
+Issues and pull requests welcome. If you build an interesting persona, open a PR to `agents/`.
+
+The skill is designed so new personas follow the same template: lens, voice, core question, behavioral constraints, risk tolerance, evidence standards, and the blind memo schema. See any file in `agents/` for the pattern.
 
 ## License
 
