@@ -1,6 +1,6 @@
 ---
 name: sanhedrin
-description: Sanhedrin — multi-persona strategic advisory council. Dispatches 5 agents (Sun Tzu, Machiavelli, Maimonides + 2 dynamic) for career, business, and life strategy. Protocol: blind memos, strategy clustering, cross-exam, Codex audit, final counsel. Invoke with /sanhedrin.
+description: Sanhedrin — multi-persona strategic advisory council. Dispatches 5 agents (Sun Tzu, Machiavelli, Maimonides + 2 dynamic) for career, business, and life strategy. Protocol: blind memos, strategy clustering, cross-exam, Codex audit, final counsel, HTML report. Invoke with /sanhedrin.
 ---
 
 # Sanhedrin
@@ -179,6 +179,34 @@ Synthesize the full session into:
 - **Dissenting view** — if any persona strongly disagrees, preserve their position
 
 Present to the user. Ask: "Does this land? Want to dig deeper on anything, or is this actionable?"
+
+### Step 8: HTML Report
+
+After final counsel lands, render a single self-contained HTML report capturing the full session. Terminal output is ephemeral — HTML is the durable artifact you can re-read in a month or share with a trusted advisor.
+
+**Save to:** `~/sanhedrin-reports/YYYY-MM-DD-<slug>.html` where `<slug>` is 3-5 lowercase hyphenated words from the user's objective (e.g., `2026-05-13-laid-off-pivot.html`). Create `~/sanhedrin-reports/` if missing.
+
+**Content (in this order):**
+
+1. **Header** — situation summary, council roster (with permanent vs dynamic distinction), date, deadline if any.
+2. **Persona cards** — one card per persona showing blind memo + cross-exam stance. Permanent personas styled distinctly from dynamic picks. If a persona was an outlier, flag visually.
+3. **Strategy clusters** — visual grid (2-3 columns), each cluster with label, summary, aligned personas as chips. Outliers visually distinct (border, badge).
+4. **Cross-exam matrix** — table or grid: which persona steelmanned/attacked which strategy, with their key argument inline.
+5. **Codex audit** — verbatim, including the mandatory "do nothing / delay" row.
+6. **Wargame transcript** (if Wargame Mode ran) — move table with rounds, opponent model, council commentary.
+7. **Final counsel hero** — recommended move (large, prominent), fallback, tripwires as a checkbox list (so the user can tick them later), first action today, dissenting view preserved prominently if any.
+8. **Copy-as-prompt button** — JS button copying `"First action: [action]. Tripwires: [list]. Context: [one-line situation]."` to clipboard for paste-back into Claude Code.
+
+**Style requirements:**
+- Single self-contained file. Inline CSS. No external CDN, no remote fonts — system font stack only.
+- Apply `frontend-design` / `impeccable` quality bar. This is a strategic artifact, not a generic AI page. Avoid default-ish layouts.
+- Mobile responsive + print-friendly (Mike may share with advisors).
+- If Maimonides dissented, surface his dissent with visual weight (border, badge) — never buried in a footer.
+
+**Final terminal message:**
+> "Report saved: `~/sanhedrin-reports/YYYY-MM-DD-<slug>.html` — `open` it to view."
+
+**Skip the report if:** user said "no report" / "skip report" during the session, or session aborted before Step 7. Otherwise default to writing it.
 
 ## Wargame Mode
 
