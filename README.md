@@ -94,6 +94,10 @@ Audit           An independent auditor pressure-tests everything:
 
 Final counsel   Recommended move, fallback, tripwires, first action
                 today, and any preserved dissent.
+
+HTML report     A self-contained HTML artifact of the full session
+                saved to ~/sanhedrin-reports/, with interactive
+                tripwire checkboxes and a copy-as-prompt button.
 ```
 
 ## The council
