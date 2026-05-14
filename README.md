@@ -12,7 +12,7 @@ A Claude Code skill that turns one-shot AI advice into structured adversarial st
 
 - **Blind memos** -- advisors write independently before seeing each other's work
 - **Cross-examination** -- every strategy gets steelmanned and attacked on structure
-- **Mandatory "do nothing"** -- inaction is always evaluated as an explicit option
+- **Mandatory "do nothing"** -- every persona's blind memo has a required `"Do nothing" assessment` field, and the optional Codex audit adds an explicit "do nothing" row to the decision-option table. Inaction is evaluated whether you install Codex or not.
 
 ## Install
 

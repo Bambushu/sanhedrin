@@ -84,14 +84,20 @@ Score briefing adequacy:
 
 ### Step 2: Blind Memos
 
-Read each agent's prompt from `agents/<name>.md` in this skill's directory. Replace `{SITUATION_BRIEFING}` with the user's situation description plus the extracted intake fields.
+Read each agent's prompt from `agents/<name>.md` in this skill's directory. Verify each file exists before dispatching — if any persona file is missing or unreadable, abort with a clear error naming the missing file. Replace `{SITUATION_BRIEFING}` with the user's situation description plus the extracted intake fields, wrapped in `<situation_briefing>...</situation_briefing>` tags.
 
 Dispatch all 5 agents in parallel using the Agent tool:
 - `mode: bypassPermissions`
 - `run_in_background: true`
+- `name:` lowercase-hyphenated persona name (e.g., `sun-tzu`, `machiavelli`)
 - Each agent's prompt is the full content of its `.md` file with `{SITUATION_BRIEFING}` filled in
+- **Save the `agentId` returned from each dispatch.** You will need it in Step 4 — names do NOT persist past task completion, only the agentId does.
 
-When all 5 return, display each memo to the user with the persona's name as a header:
+**Concurrency note:** Five agents in parallel is the default. If your environment is memory-constrained or the user has documented a lower concurrency cap (e.g., `~3`), batch as `3+2` sequentially — the protocol does not require literal simultaneity, just independent (blind) memos.
+
+**Fallback if any agent fails:** If an agent times out (>5 min), returns empty content, or errors, mark it `Unavailable`, display a notice to the user, and continue clustering with the remaining memos. The empty slot must not block downstream steps. If 3+ agents fail, abort and surface the failures rather than proceeding on weak signal.
+
+When agents return, display each memo to the user with the persona's name as a header:
 
 > **Sun Tzu:**
 > [memo content]
@@ -127,7 +133,13 @@ Display the clusters to the user:
 
 ### Step 4: Cross-Exam
 
-Send all 5 agents the clustered strategies (NOT the raw memos) via SendMessage. **Important:** When using SendMessage to reach named agents, always include a `summary` parameter (e.g., "Cross-exam: steelman and attack clustered strategies"). Each agent must:
+Send all 5 agents the clustered strategies (NOT the raw memos) via SendMessage.
+
+**Important — addressing:** Use the `agentId` you saved in Step 2, **not the persona name**. Names do not persist past task completion; only the agentId does. If you try `to: "sun-tzu"` after the agent's first task finished, you will get `"No agent named 'sun-tzu' is currently addressable"`. Use `to: "<agentId-from-step-2>"`. Always include a `summary` parameter (e.g., "Cross-exam: steelman and attack clustered strategies").
+
+**Cluster assignment — exclude each persona's own cluster:** Each persona must steelman ONE cluster they do NOT belong to, and attack ONE cluster they do NOT belong to. Self-praise and self-critique defeat the adversarial purpose of cross-exam. Distribute so every cluster receives at least one attack and at least one steelman defender.
+
+Each agent must:
 
 1. **Steelman** one competing strategy — restate it in terms its author would accept
 2. **Attack** one competing strategy with structural criticism only:
@@ -152,7 +164,7 @@ After displaying cross-exam results, pause and ask the user:
 > - Say **'audit'** to proceed to Codex audit
 > - Say **'wargame'** to simulate opponent moves"
 
-Route user messages to the relevant agent(s) via SendMessage (always include `summary` parameter). Continue the conversation until the user says "audit" or "wargame."
+Route user messages to the relevant agent(s) via SendMessage using the saved `agentId` (always include `summary` parameter). Match relevance by explicit persona name in the user's message (e.g., "Schelling, what if my BATNA is weaker?"); broadcast factual updates that change the situation briefing to all agents. Continue the conversation until the user expresses readiness to advance — phrases like "audit", "wargame", "let's see the audit", or "ready to wrap up" all qualify; don't pedantically require literal keywords.
 
 ### Step 6: Codex Audit
 
@@ -166,7 +178,11 @@ Dispatch a Codex agent (subagent_type: codex:codex-rescue) with:
 - Any user interventions and responses
 - The structured intake fields from Step 1
 
-Display the Codex audit results to the user.
+**Validate the Codex return before displaying.** Confirm: (1) the response contains a "do nothing / delay" row in the decision option table — this is mandatory per the template; (2) each strategy cluster from Step 3 has a row in the table; (3) probability bands are present and use ranges (not round numbers like 50%, 75%). If validation fails, retry Codex once with a more explicit prompt referencing the missing requirement. If the retry also fails, fall back to performing the audit locally following `references/codex-audit-template.md` and surface that to the user as a degraded-but-functional manual audit.
+
+**Fallback if Codex unavailable:** If the `codex:codex-rescue` subagent type is not registered in the user's environment (OSS users without Codex integration), perform the audit locally: read `references/codex-audit-template.md` and produce the required tables yourself, clearly labeled "(manual audit — Codex integration not installed)".
+
+Display the validated audit results to the user.
 
 ### Step 7: Final Counsel
 
