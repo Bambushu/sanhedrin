@@ -1,0 +1,424 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sanhedrin · Demo Session · Acquisition Offer</title>
+<style>
+  :root {
+    --paper: #f6f3ec;
+    --paper-2: #fbf9f4;
+    --ink: #1a1814;
+    --ink-2: #4a4438;
+    --ink-3: #7a7263;
+    --rule: #d4ccb8;
+    --rule-2: #e8e0cc;
+    --card: #ffffff;
+    --accent: #6e2818;
+    --accent-2: #8b3a1a;
+    --warn: #a23030;
+    --good: #2c5a2c;
+    --gold: #8a6914;
+    --chip: #efe9d8;
+    --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+    --sans: ui-sans-serif, system-ui, -apple-system, "Helvetica Neue", Helvetica, Arial, sans-serif;
+    --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--serif);
+    font-size: 17px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 48px 32px 96px; }
+  .label { font-family: var(--sans); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-3); }
+
+  .masthead {
+    border-top: 4px double var(--ink);
+    border-bottom: 1px solid var(--ink);
+    padding: 24px 0 18px;
+    margin-bottom: 36px;
+    position: relative;
+  }
+  .masthead .label-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    font-family: var(--sans); font-size: 12px; letter-spacing: 0.18em;
+    text-transform: uppercase; color: var(--ink-2);
+    margin-bottom: 8px;
+  }
+  .masthead h1 {
+    font-family: var(--serif); font-weight: 600; font-size: 46px; line-height: 1.05;
+    margin: 6px 0 6px; letter-spacing: -0.01em;
+  }
+  .masthead h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .masthead .sub {
+    font-family: var(--serif); font-style: italic; font-size: 19px;
+    color: var(--ink-2); margin-top: 8px; max-width: 80ch;
+  }
+  .motto { font-family: var(--serif); font-style: italic; color: var(--ink-3); font-size: 13px; margin-top: 10px; }
+
+  .meta {
+    display: grid; grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 0; border: 1px solid var(--rule); background: var(--card);
+    margin-bottom: 40px;
+  }
+  .meta > div { padding: 14px 18px; border-right: 1px solid var(--rule); }
+  .meta > div:last-child { border-right: 0; }
+  .meta .label { display: block; margin-bottom: 4px; }
+  .meta .val { font-family: var(--serif); font-size: 16px; line-height: 1.3; }
+  .meta .small {
+    color: var(--ink-3); font-family: var(--sans); font-size: 11px; letter-spacing: 0.1em;
+  }
+
+  section { margin-bottom: 52px; }
+  h2.section-h {
+    font-family: var(--serif); font-weight: 600; font-size: 13px; letter-spacing: 0.22em;
+    text-transform: uppercase; color: var(--ink);
+    padding-bottom: 6px; border-bottom: 1px solid var(--ink);
+    margin: 0 0 22px; display: flex; align-items: baseline; justify-content: space-between;
+  }
+  h2.section-h .num { font-family: var(--mono); color: var(--accent); font-weight: 700; font-size: 12px; }
+
+  .roster { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 32px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border: 1px solid var(--rule); background: var(--card);
+    border-radius: 2px; font-family: var(--sans); font-size: 12px; letter-spacing: 0.02em;
+  }
+  .chip.permanent { background: var(--ink); color: var(--paper-2); border-color: var(--ink); }
+  .chip.permanent::before { content: "•"; }
+  .chip.dynamic { background: var(--chip); }
+  .chip.dynamic::before { content: "◇"; color: var(--accent); }
+  .chip.auditor { background: var(--paper-2); border: 1px dashed var(--ink-3); font-style: italic; }
+  .chip.auditor::before { content: "§"; color: var(--gold); }
+
+  .personas {
+    display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 18px;
+  }
+  .persona {
+    background: var(--card); border: 1px solid var(--rule);
+    padding: 22px 22px 18px; position: relative;
+  }
+  .persona.permanent { border-left: 4px solid var(--ink); }
+  .persona.dynamic   { border-left: 4px solid var(--accent); }
+  .persona.dissent { border-left: 4px solid var(--warn); }
+  .persona .head {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 12px; border-bottom: 1px solid var(--rule-2); padding-bottom: 10px;
+  }
+  .persona .head h3 {
+    margin: 0; font-family: var(--serif); font-weight: 600; font-size: 22px; letter-spacing: -0.005em;
+  }
+  .persona .head .lens {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); max-width: 50%; text-align: right;
+  }
+  .persona .field { margin-bottom: 10px; }
+  .persona .field .k {
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--ink-3); display: block; margin-bottom: 2px;
+  }
+  .persona .field .v { font-family: var(--serif); font-size: 15px; line-height: 1.5; color: var(--ink); }
+  .persona .conf {
+    display: inline-block; margin-top: 6px; padding: 2px 8px;
+    background: var(--ink); color: var(--paper-2);
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .persona .conf.medium { background: var(--gold); }
+  .persona .badge-dissent {
+    position: absolute; top: 16px; right: 20px;
+    background: var(--warn); color: #fff; padding: 3px 8px;
+    font-family: var(--sans); font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+  }
+
+  .clusters { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 16px; margin-top: 20px; }
+  .cluster {
+    background: var(--card); border: 1px solid var(--rule); padding: 22px;
+    position: relative; display: flex; flex-direction: column;
+  }
+  .cluster .ck {
+    font-family: var(--mono); font-size: 12px; color: var(--accent);
+    letter-spacing: 0.1em; margin-bottom: 8px; font-weight: 700;
+  }
+  .cluster h4 {
+    font-family: var(--serif); font-weight: 600; font-size: 21px; margin: 0 0 8px; line-height: 1.15;
+  }
+  .cluster .members {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 14px;
+  }
+  .cluster p {
+    font-family: var(--serif); font-size: 14.5px; line-height: 1.55; color: var(--ink-2); margin: 0 0 14px;
+  }
+  .cluster .status {
+    margin-top: auto; padding: 6px 10px;
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase;
+  }
+  .cluster.consensus { border: 2px solid var(--accent); }
+  .cluster.consensus .status { background: var(--accent); color: #fff; }
+  .cluster.outlier { opacity: 0.85; }
+  .cluster.outlier .status { background: var(--gold); color: #fff; }
+  .cluster.outlier::before {
+    content: "OUTLIER"; position: absolute; top: -10px; left: 16px;
+    background: var(--paper); padding: 0 8px;
+    font-family: var(--sans); font-size: 9px; letter-spacing: 0.22em; color: var(--warn); font-weight: 700;
+  }
+  .cluster.standard .status { background: var(--ink); color: var(--paper-2); }
+
+  .hero {
+    background: linear-gradient(180deg, var(--paper-2) 0%, var(--card) 100%);
+    border: 1px solid var(--ink); padding: 32px 36px;
+    margin-top: 22px; position: relative;
+  }
+  .hero .stamp {
+    position: absolute; top: 18px; right: 24px;
+    font-family: var(--sans); font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+    color: var(--accent); border: 1px solid var(--accent); padding: 4px 10px;
+  }
+  .hero .verdict-label {
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--ink-3); margin-bottom: 8px;
+  }
+  .hero h3 {
+    font-family: var(--serif); font-weight: 600; font-size: 30px; line-height: 1.15;
+    margin: 0 0 14px; letter-spacing: -0.01em;
+  }
+  .hero h3 em { color: var(--accent); font-style: italic; }
+  .hero .summary { font-family: var(--serif); font-size: 16px; line-height: 1.6; color: var(--ink-2); max-width: 68ch; margin: 0; }
+
+  footer {
+    margin-top: 72px; padding-top: 18px; border-top: 1px solid var(--rule);
+    font-family: var(--sans); font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--ink-3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+  }
+
+  @media (max-width: 920px) {
+    .wrap { padding: 28px 18px 64px; }
+    .masthead h1 { font-size: 34px; }
+    .meta { grid-template-columns: repeat(2, 1fr); }
+    .meta > div { border-right: 0; border-bottom: 1px solid var(--rule); }
+    .personas { grid-template-columns: 1fr; }
+    .clusters { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="masthead">
+    <div class="label-row">
+      <span>Sanhedrin · Strategic Advisory Council</span>
+      <span>Demo Session · 2026-05-13</span>
+    </div>
+    <h1>Take the higher offer, <em>or hold for terms?</em></h1>
+    <p class="sub">
+      Two acquirers in motion. 45 days of runway. One cofounder wants to wait, the other thinks the higher offer is the floor. The council convenes to debate whether speed or leverage produces the better outcome.
+    </p>
+    <p class="motto">&ldquo;Accept the truth from whatever source it comes.&rdquo; &mdash; Maimonides</p>
+  </header>
+
+  <div class="meta">
+    <div>
+      <span class="label">Acquirer A</span>
+      <div class="val">EUR 14M all-cash<br/><span class="small">CLOSE BY DAY 21</span></div>
+    </div>
+    <div>
+      <span class="label">Acquirer B</span>
+      <div class="val">EUR 18M, 60% earnout<br/><span class="small">CLOSE BY DAY 45</span></div>
+    </div>
+    <div>
+      <span class="label">Runway</span>
+      <div class="val">45 days<br/><span class="small">PRE-BRIDGE OPTION</span></div>
+    </div>
+    <div>
+      <span class="label">Internal Split</span>
+      <div class="val">Cofounder wants to wait<br/><span class="small">FOR THIRD INBOUND</span></div>
+    </div>
+  </div>
+
+  <h2 class="section-h"><span>The Council</span><span class="num">i</span></h2>
+  <div class="roster">
+    <span class="chip permanent">Sun Tzu &mdash; terrain · timing</span>
+    <span class="chip permanent">Machiavelli &mdash; power · incentives</span>
+    <span class="chip permanent">Maimonides &mdash; systems · ethics</span>
+    <span class="chip dynamic">Schelling &mdash; BATNA · signaling</span>
+    <span class="chip dynamic">Kahneman &mdash; bias correction</span>
+    <span class="chip auditor">Codex &mdash; auditor</span>
+  </div>
+
+  <section>
+    <h2 class="section-h"><span>Blind Memos</span><span class="num">02</span></h2>
+    <div class="personas">
+
+      <div class="persona permanent">
+        <div class="head">
+          <h3>Sun Tzu</h3>
+          <span class="lens">Terrain · Timing · Indirect strategy</span>
+        </div>
+        <div class="field">
+          <span class="k">Diagnosis</span>
+          <div class="v">A buyer in motion is a buyer paying premium. 45 days is your window of leverage, not theirs &mdash; once they know you have an alternative, the question shifts from <em>whether</em> they pay more to <em>how much</em>.</div>
+        </div>
+        <div class="field">
+          <span class="k">Recommended move</span>
+          <div class="v">Do not accept Acquirer A&rsquo;s first number. Reveal Acquirer B exists to A privately and let them compete on terms, not just price.</div>
+        </div>
+        <div class="field">
+          <span class="k">Failure mode</span>
+          <div class="v">You announce competition publicly. Both buyers walk to preserve their own reputational position. You burn 30 of your 45 days with no alternative.</div>
+        </div>
+        <span class="conf">Confidence · High</span>
+      </div>
+
+      <div class="persona permanent">
+        <div class="head">
+          <h3>Machiavelli</h3>
+          <span class="lens">Power · Appearances · Incentives</span>
+        </div>
+        <div class="field">
+          <span class="k">Diagnosis</span>
+          <div class="v">Your cofounder doesn&rsquo;t want to wait because the offer is wrong. Your cofounder wants to wait because <em>her</em> payoff vests differently than yours. Discover the misalignment before you negotiate with anyone external.</div>
+        </div>
+        <div class="field">
+          <span class="k">Recommended move</span>
+          <div class="v">A private hour with the cap table. Then a private hour with the cofounder. Then the buyers. Internal alignment is a precondition for external leverage &mdash; reversed order, both buyers smell uncertainty in seven days.</div>
+        </div>
+        <div class="field">
+          <span class="k">Failure mode</span>
+          <div class="v">You assume aligned incentives. You go to A with a counter. Cofounder learns from a board observer and surfaces objection in front of the buyer. Deal collapses on appearances, not on price.</div>
+        </div>
+        <span class="conf">Confidence · High</span>
+      </div>
+
+      <div class="persona permanent">
+        <div class="head">
+          <h3>Maimonides</h3>
+          <span class="lens">Systems · Ethics · The golden mean</span>
+        </div>
+        <div class="field">
+          <span class="k">Diagnosis</span>
+          <div class="v">The team you built is the asset both acquirers are actually buying. Price-optimizing erases the team in 18 months; term-optimizing keeps the mission alive but at a number that looks worse on paper.</div>
+        </div>
+        <div class="field">
+          <span class="k">Recommended move</span>
+          <div class="v">Weight non-price terms above pure euros: retention guarantees, founder roles for 24 months, mission continuity clauses. Counter A on terms; the price moves second.</div>
+        </div>
+        <div class="field">
+          <span class="k">Failure mode</span>
+          <div class="v">You take the higher number, blow up the team six months in, and watch the integration unwind. The acquirer writes off the deal. Your reputation in the next venture is the one that pays the bill.</div>
+        </div>
+        <span class="conf medium">Confidence · High directional · Medium tactical</span>
+      </div>
+
+      <div class="persona dynamic">
+        <div class="head">
+          <h3>Schelling</h3>
+          <span class="lens">Bargaining · Commitment · BATNA</span>
+        </div>
+        <div class="field">
+          <span class="k">Diagnosis</span>
+          <div class="v">Your real BATNA is &ldquo;can you survive another fundraise,&rdquo; not &ldquo;shut down.&rdquo; If a bridge round is available at any terms, you have walk-away power and the buyers know it; if not, your deadline is a wishbone, not a threat.</div>
+        </div>
+        <div class="field">
+          <span class="k">Recommended move</span>
+          <div class="v">Commit publicly to a 14-day decision window <em>only if</em> you have a credible bridge option you can name to yourself. The commitment device only works when the threat is credible to both sides.</div>
+        </div>
+        <div class="field">
+          <span class="k">Failure mode</span>
+          <div class="v">You set a 14-day deadline. Acquirer A calls the bluff. You blink on day 14. Your next negotiation in life is conducted from a position both sides remember.</div>
+        </div>
+        <span class="conf">Confidence · High</span>
+      </div>
+
+      <div class="persona dynamic dissent">
+        <div class="head">
+          <h3>Kahneman</h3>
+          <span class="lens">Bias correction · Base rates</span>
+        </div>
+        <span class="badge-dissent">Outlier</span>
+        <div class="field">
+          <span class="k">Diagnosis</span>
+          <div class="v">The first offer is anchoring everyone. Loss aversion is making &ldquo;shut down&rdquo; feel like a 10x worse outcome than it actually is &mdash; founder reputations survive shutdowns regularly, especially when proximate cause is &ldquo;disciplined walk from bad terms.&rdquo;</div>
+        </div>
+        <div class="field">
+          <span class="k">Recommended move</span>
+          <div class="v">Before any external move, write the post-mortem of each acceptance scenario, dated 18 months out. Most likely failure of accepting A: integration friction, team attrition by month 9. Most likely failure of accepting B: earnout never pays, founder role evaporates by month 12. Then choose against the less-tolerable failure.</div>
+        </div>
+        <div class="field">
+          <span class="k">Failure mode</span>
+          <div class="v">Post-hoc rationalization. You write the post-mortem after you&rsquo;ve already made the choice and it tells you what you wanted to hear.</div>
+        </div>
+        <span class="conf">Confidence · High</span>
+      </div>
+
+      <div class="persona" style="border-left: 4px solid var(--gold); background: var(--paper-2);">
+        <div class="head">
+          <h3>Codex <small style="font-family:var(--sans); font-size:11px; letter-spacing:0.16em; color:var(--ink-3); margin-left:8px;">AUDITOR</small></h3>
+          <span class="lens">Cold analysis · Probabilities · Pre-mortems</span>
+        </div>
+        <div class="field">
+          <span class="k">Probability bands</span>
+          <div class="v"><strong>Accept A as-is:</strong> 34&ndash;48% lands favorably &middot; <strong>Counter A + leverage B:</strong> 41&ndash;58% &middot; <strong>14-day deadline + bridge prep:</strong> 38&ndash;55% (conditional on bridge) &middot; <strong>Wait for third inbound:</strong> 17&ndash;29% &#9888;</div>
+        </div>
+        <div class="field">
+          <span class="k">Unanimity flag</span>
+          <div class="v">Four of five personas assume the cofounder&rsquo;s stated reason for waiting is her actual reason. Unanimity in a diverse council is suspicious. Verify before acting on the alignment assumption.</div>
+        </div>
+        <span class="conf" style="background: var(--gold);">See full audit below</span>
+      </div>
+
+    </div>
+  </section>
+
+  <section>
+    <h2 class="section-h"><span>Strategy Clusters</span><span class="num">03</span></h2>
+    <div class="clusters">
+
+      <div class="cluster standard">
+        <span class="ck">A</span>
+        <h4>Accept the cleaner offer</h4>
+        <div class="members">(no permanent endorser)</div>
+        <p>Take Acquirer A&rsquo;s 14M all-cash this week. Eliminate execution risk on the earnout. Trade upside for certainty. Lock the team retention package before signing.</p>
+        <div class="status">Codex band 34&ndash;48%</div>
+      </div>
+
+      <div class="cluster consensus">
+        <span class="ck">B</span>
+        <h4>Counter A + leverage B privately</h4>
+        <div class="members">Sun Tzu · Machiavelli · Maimonides · Schelling</div>
+        <p>Internal alignment with cofounder first. Then a private signal to A that B exists and a request for revised terms (retention, role, mission continuity). 14-day commitment device conditional on a credible bridge option.</p>
+        <div class="status">Consensus · 41&ndash;58%</div>
+      </div>
+
+      <div class="cluster outlier">
+        <span class="ck">C</span>
+        <h4>Write the post-mortem first</h4>
+        <div class="members">Kahneman</div>
+        <p>Before any external move, write the 18-month post-mortem of each scenario from the inside &mdash; identify which failure mode is least tolerable. Then choose. The frame &ldquo;which loss can I live with&rdquo; outperforms &ldquo;which gain can I capture&rdquo; under loss aversion.</p>
+        <div class="status">Outlier · 38&ndash;52%</div>
+      </div>
+
+    </div>
+
+    <div class="hero">
+      <span class="stamp">Sanhedrin · Verdict</span>
+      <div class="verdict-label">Recommended Move</div>
+      <h3>Cluster B &mdash; <em>counter A on terms, leverage B privately, align cofounder first.</em></h3>
+      <p class="summary">
+        Internal hour with the cap table and a private hour with the cofounder before any external counter. Then private signal to A that B exists; ask for revised terms (retention, founder role, mission continuity) at the 14M price first, price second. Set the 14-day commitment device only after confirming a credible bridge option exists &mdash; otherwise the deadline is theatre and both sides know it.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    <div>Sanhedrin Demo Session &middot; Acquisition scenario &middot; Generated by the protocol</div>
+    <div>Five personas &middot; Codex audit &middot; HTML report</div>
+  </footer>
+
+</div>
+</body>
+</html>

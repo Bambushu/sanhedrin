@@ -5,14 +5,10 @@ A Claude Code skill that turns one-shot AI advice into structured adversarial st
 > *"Accept the truth from whatever source it comes"* -- Maimonides
 
 <p align="center">
-  <a href="https://bambushu.github.io/sanhedrin/demo/replay.html">
-    <img src="demo/hero-poster.png" alt="Sanhedrin terminal replay - advisors debating an unlicensed casino offer" width="920">
-  </a>
+  <img src="demo/hero-poster.png" alt="Sanhedrin HTML report - five strategic advisors convened on an acquisition offer" width="920">
 </p>
 
-<p align="center">
-  <a href="https://bambushu.github.io/sanhedrin/demo/replay.html">Open interactive replay</a>
-</p>
+<p align="center"><em>A session ends with a single self-contained HTML report you can re-read, share, or paste back into Claude Code.</em></p>
 
 - **Blind memos** -- advisors write independently before seeing each other's work
 - **Cross-examination** -- every strategy gets steelmanned and attacked on structure
